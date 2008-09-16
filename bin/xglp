@@ -1,0 +1,16 @@
+#!/bin/sh
+
+conf=/etc/sysconfig/displaymanager
+. $conf
+
+if [ "$DISPLAYMANAGER_XSERVER" = "Xgl" ]; then
+    echo "Xgl currently enabled."
+elif [ "$DISPLAYMANAGER_XSERVER" = "Xorg" ]; then
+    echo "Xgl currently disabled."
+else
+    cat <<EOF >&2
+ERROR: unrecognised value '$DISPLAYMANAGER_XSERVER' for \$DISPLAYMANAGER_XSERVER
+in $conf.
+EOF
+    exit 1
+fi

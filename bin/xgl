@@ -1,0 +1,25 @@
+#!/bin/sh
+
+if [ "`id -u`" != 0 ]; then
+    sudo=sudo
+fi
+
+conf=/etc/sysconfig/displaymanager
+. $conf
+
+PATH=/opt/gnome/bin:$PATH
+switcher=gnome-xgl-switch
+
+if [ "$DISPLAYMANAGER_XSERVER" = "Xgl" ]; then
+    echo "Xgl currently enabled; disabling ..."
+    $sudo $switcher --disable-xgl
+elif [ "$DISPLAYMANAGER_XSERVER" = "Xorg" ]; then
+    echo "Xgl currently disabled; enabling ..."
+    $sudo $switcher --enable-xgl
+else
+    cat <<EOF >&2
+ERROR: unrecognised value '$DISPLAYMANAGER_XSERVER' for \$DISPLAYMANAGER_XSERVER
+in $conf.
+EOF
+    exit 1
+fi

@@ -1,0 +1,7 @@
+# SL10.0 *and* code10 (SL10.1, SLES10, SLED10)
+[ -e /etc/SuSE-release ] && \
+grep -iq 'SUSE LINUX' /etc/SuSE-release && \
+grep -iq 'VERSION *= *10' /etc/SuSE-release && \
+PATH=$PATH:/usr/games:/opt/gnome/bin:/opt/kde3/bin:/usr/lib/mit/bin:/usr/lib/mit/sbin
+
+export GTK_CONFIG=/opt/gnome/bin/gtk-config
