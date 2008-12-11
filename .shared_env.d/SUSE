@@ -16,4 +16,10 @@ if [ -e /etc/SuSE-release ]; then
     if [ -x /opt/gnome/bin/gtk-config ]; then
         export GTK_CONFIG=/opt/gnome/bin/gtk-config
     fi
+
+    pydoc=/usr/share/doc/packages/python/html
+    if [ -d "$pydoc" ]; then
+        : ${PYTHONDOCS:="$pydoc"}
+        export PYTHONDOCS
+    fi
 fi
