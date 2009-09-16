@@ -177,7 +177,10 @@ if ($opts{version}) {
 sub get_repo_ids {
   my (@ids, %repos);
   my @FIELDS = qw(id alias name enabled refresh priority type uri service);
-  open(ZYPPER, "zypper lr -d|")
+  # Thanks to Michal Marek for pointing out that on openSUSE 11.1 at
+  # least, zypper's output can sometimes start with a strange escape
+  # sequence when localised.  We work-around by setting LC_MESSAGES=C.
+  open(ZYPPER, "LC_MESSAGES=C zypper lr -d|")
     or die "Couldn't open(zypper lr -d|): $!\n";
   while (<ZYPPER>) {
     chomp;
