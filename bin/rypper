@@ -81,7 +81,7 @@ use warnings;
 
 use Getopt::Long;
 
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 
 (my $ME = $0) =~ s,.*/,,;
 
