@@ -81,7 +81,7 @@ use warnings;
 
 use Getopt::Long;
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 (my $ME = $0) =~ s,.*/,,;
 
@@ -107,7 +107,7 @@ The specifiers determine which repositories the zypper command applies to:
    -d, --disabled          disabled repos
    -e, --enabled           enabled repos
    -r, --refresh           repos with autorefresh enabled
-   -R, --no-refresh    repos with autorefresh disabled
+   -R, --no-refresh        repos with autorefresh disabled
    -a, --alias=REGEXP      repos whose alias matches REGEXP
    -n, --name=REGEXP       repos whose name matches REGEXP
    -p, --priority=PRIORITY repos whose priority equals PRIORITY
