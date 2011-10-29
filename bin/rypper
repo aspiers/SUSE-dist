@@ -185,6 +185,7 @@ sub get_repo_ids {
   while (<ZYPPER>) {
     chomp;
     next if /^#/ || /^[-+]{40}/;
+    s/^\s+//;
     my @values = split /\s+\|\s+/, $_;
     my %repo = map { $FIELDS[$_] => ($values[$_] || '') } 0 .. $#FIELDS;
     if (repo_matches(%repo)) {
