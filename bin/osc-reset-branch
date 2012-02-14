@@ -117,7 +117,7 @@ main () {
     tmpdir="$package_dir.good"
 
     safe_run mv "$package_dir" "$tmpdir"
-    safe_run osc rdelete "$branch_project" "$pkg"; then
+    safe_run osc rdelete "$branch_project" "$pkg"
     safe_run cd "$root"
     safe_run osc -A "$apiurl" branch "$project" "$pkg"
     safe_run osc -A "$apiurl" co "$branch_project" "$pkg"
