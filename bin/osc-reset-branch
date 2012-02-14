@@ -112,6 +112,9 @@ main () {
     safe_run cd "$start_dir"
 
     tmpdir="$package_dir.good"
+    if [ -d "$tmpdir" ]; then
+        error "$tmpdir already exists!"
+    fi
 
     safe_run mv "$package_dir" "$tmpdir"
     safe_run osc rdelete "$branch_project" "$pkg"
