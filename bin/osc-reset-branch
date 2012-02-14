@@ -1,0 +1,161 @@
+#!/bin/bash 
+
+me=`basename $0`
+
+usage () {
+    # Call as: usage [EXITCODE] [USAGE MESSAGE]
+    exit_code=1
+    if [[ "$1" == [0-9] ]]; then
+        exit_code="$1"
+        shift
+    fi
+    if [ -n "$1" ]; then
+        echo "$*" >&2
+        echo
+    fi
+
+    cat <<EOF >&2
+Usage: $me PKGDIR
+EOF
+    exit "$exit_code"
+}
+
+parse_opts () {
+    if [ "$1" == '-h' ] || [ "$1" == '--help' ]; then
+        usage 0
+    fi
+
+    package_dir="$1"
+    [ -d "$package_dir" ] || usage
+    if ! [ -e "$package_dir/.osc/_package" ]; then
+        usage "$package_dir is not a checked out buildservice package"
+    fi
+}
+
+error () {
+  echo "ERROR: $*" >&2
+  exit 1
+}
+
+check_config () {
+    case "`osc config general checkout_no_colon`" in
+        *"checkout_no_colon"*" is set to '1'")
+            ;;
+        *)
+            error "checkout_no_colon must be set to 1"
+    esac
+}
+
+read_config () {
+    # pkg=`cat "$package_dir/.osc/_package"`
+    # prj=`cat "$package_dir/.osc/_project"`
+
+    while read line; do
+        case "$line" in
+            'Project name:'*)
+                branch_project="${line#Project name: }"
+                branch_project_path="${branch_project//://}"
+                ;;
+            'Package name: '*)
+                pkg="${line#Package name: }"
+                ;;
+            'Path: '*)
+                abspackage_dir="${line#Path: }"
+                ;;
+            'API URL: '*)
+                apiurl="${line#API URL: }"
+                ;;
+        esac
+    done < <(osc info)
+
+    user_config="`osc config $apiurl user`" || error "osc config $apiurl user failed"
+    user=$(
+        echo "$user_config" | \
+            sed -n "/.* is set to '\(.\+\)'/{s//\1/;p}"
+    )
+    if [ -z "$user" ]; then
+        error "Failed to retrieve username"
+    fi
+    branch_root="home:$user:branches"
+    echo "Branch root: $branch_root"
+    project="${branch_project#$branch_root:}"
+    if [ "$project" = "$branch_project" ]; then
+        error "Failed to calculate upstream project name"
+    fi
+
+    pkgpath="$branch_project_path/$pkg"
+    root="${abspackage_dir%/$pkgpath}"
+    echo "Root: $root"
+    if ! [ -d "$root" ] || [ -e "$root/.osc" ]; then
+        echo "Failed to calculate root of osc working directory!" >&2
+        echo "Full project path: $abspackage_dir" >&2
+        echo "Relative subpath to package: $pkgpath" >&2
+        error "Aborting."
+    fi
+}
+
+main () {
+    parse_opts "$@"
+
+    start_dir="`pwd`"
+    cd "$package_dir"
+    check_config
+    read_config
+    cd "$start_dir"
+
+    tmpdir="$package_dir.good"
+
+    if mv "$package_dir" "$tmpdir"; then
+        echo "Renamed $package_dir to $tmpdir"
+    else
+        error "Failed to rename $package_dir to $tmpdir; aborting!"
+    fi
+    
+    # if osc rdelete "$branch_project" "$pkg"; then
+    #     echo "Remote-deleted $pkg from $branch_project"
+    # else
+    #     error "Failed to remote-delete $pkg from $branch_project; aborting!"
+    # fi
+    
+    if cd "$root"; then
+        echo "cd $root"
+    else
+        error "cd $root failed"
+    fi
+
+    # if ! osc -A "$apiurl" branch "$project" "$pkg"; then
+    #     error "osc -A $apiurl branch $project $pkg failed"
+    # fi
+
+    if ! osc -A "$apiurl" co "$branch_project" "$pkg"; then
+        error "osc -A $apiurl co $branch_project $pkg failed"
+    fi
+
+    cd "$start_dir"
+
+    if mv "$tmpdir/.osc" /tmp/osc-reset-pkg.$$; then
+        echo "mv $tmpdir/.osc /tmp/osc-reset-pkg.$$"
+    else
+        error "mv old .osc failed"
+    fi
+    
+    if mv "$package_dir/.osc" "$tmpdir"; then
+        echo "mv $package_dir/.osc $tmpdir"
+    else
+        error "transplant fresh .osc failed"
+    fi
+
+    if rm -rf "$package_dir"; then
+        echo rm -rf "$package_dir"
+    else
+        error "remove fresh project wd failed"
+    fi
+
+    if mv "$tmpdir" "$package_dir"; then
+        echo "mv $tmpdir $package_dir"
+    else
+        error "restore of good sources failed"
+    fi
+}
+
+main "$@"
