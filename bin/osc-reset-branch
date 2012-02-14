@@ -111,11 +111,11 @@ main () {
         error "Failed to rename $package_dir to $tmpdir; aborting!"
     fi
     
-    # if osc rdelete "$branch_project" "$pkg"; then
-    #     echo "Remote-deleted $pkg from $branch_project"
-    # else
-    #     error "Failed to remote-delete $pkg from $branch_project; aborting!"
-    # fi
+    if osc rdelete "$branch_project" "$pkg"; then
+        echo "Remote-deleted $pkg from $branch_project"
+    else
+        error "Failed to remote-delete $pkg from $branch_project; aborting!"
+    fi
     
     if cd "$root"; then
         echo "cd $root"
@@ -123,9 +123,9 @@ main () {
         error "cd $root failed"
     fi
 
-    # if ! osc -A "$apiurl" branch "$project" "$pkg"; then
-    #     error "osc -A $apiurl branch $project $pkg failed"
-    # fi
+    if ! osc -A "$apiurl" branch "$project" "$pkg"; then
+        error "osc -A $apiurl branch $project $pkg failed"
+    fi
 
     if ! osc -A "$apiurl" co "$branch_project" "$pkg"; then
         error "osc -A $apiurl co $branch_project $pkg failed"
