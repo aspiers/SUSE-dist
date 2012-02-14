@@ -95,13 +95,10 @@ read_config () {
 }
 
 safe_run () {
-    # action="$1"
-    # shift
-    # [ -n "$action" ] || action="$*"
     if "$@"; then
-        echo "$action succeeded"
+        echo "$* succeeded"
     else
-        error "$action failed; aborting!"
+        error "$* failed; aborting!"
     fi
 }
 
