@@ -94,68 +94,40 @@ read_config () {
     fi
 }
 
+safe_run () {
+    # action="$1"
+    # shift
+    # [ -n "$action" ] || action="$*"
+    if "$@"; then
+        echo "$action succeeded"
+    else
+        error "$action failed; aborting!"
+    fi
+}
+
 main () {
     parse_opts "$@"
 
     start_dir="`pwd`"
-    cd "$package_dir"
+    safe_run cd "$package_dir"
     check_config
     read_config
-    cd "$start_dir"
+    safe_run cd "$start_dir"
 
     tmpdir="$package_dir.good"
 
-    if mv "$package_dir" "$tmpdir"; then
-        echo "Renamed $package_dir to $tmpdir"
-    else
-        error "Failed to rename $package_dir to $tmpdir; aborting!"
-    fi
-    
-    if osc rdelete "$branch_project" "$pkg"; then
-        echo "Remote-deleted $pkg from $branch_project"
-    else
-        error "Failed to remote-delete $pkg from $branch_project; aborting!"
-    fi
-    
-    if cd "$root"; then
-        echo "cd $root"
-    else
-        error "cd $root failed"
-    fi
+    safe_run mv "$package_dir" "$tmpdir"
+    safe_run osc rdelete "$branch_project" "$pkg"; then
+    safe_run cd "$root"
+    safe_run osc -A "$apiurl" branch "$project" "$pkg"
+    safe_run osc -A "$apiurl" co "$branch_project" "$pkg"
 
-    if ! osc -A "$apiurl" branch "$project" "$pkg"; then
-        error "osc -A $apiurl branch $project $pkg failed"
-    fi
+    safe_run cd "$start_dir"
 
-    if ! osc -A "$apiurl" co "$branch_project" "$pkg"; then
-        error "osc -A $apiurl co $branch_project $pkg failed"
-    fi
-
-    cd "$start_dir"
-
-    if mv "$tmpdir/.osc" /tmp/osc-reset-pkg.$$; then
-        echo "mv $tmpdir/.osc /tmp/osc-reset-pkg.$$"
-    else
-        error "mv old .osc failed"
-    fi
-    
-    if mv "$package_dir/.osc" "$tmpdir"; then
-        echo "mv $package_dir/.osc $tmpdir"
-    else
-        error "transplant fresh .osc failed"
-    fi
-
-    if rm -rf "$package_dir"; then
-        echo rm -rf "$package_dir"
-    else
-        error "remove fresh project wd failed"
-    fi
-
-    if mv "$tmpdir" "$package_dir"; then
-        echo "mv $tmpdir $package_dir"
-    else
-        error "restore of good sources failed"
-    fi
+    safe_run mv "$tmpdir/.osc" /tmp/osc-reset-pkg.$$
+    safe_run mv "$package_dir/.osc" "$tmpdir"
+    safe_run rm -rf "$package_dir"
+    safe_run mv "$tmpdir" "$package_dir"
 }
 
 main "$@"
