@@ -1,0 +1,3 @@
+#!/bin/bash
+
+osc buildlog "$@" | awk '/^RPMLINT/,/^[0-9]+ packages and [0-9]+ specfiles checked/ {print}'
