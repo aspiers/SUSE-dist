@@ -3,6 +3,10 @@
 # Classify one or more checked out OBS project trees, to distinguish
 # between projects which have been branched / linkpac'd / copypac'd.
 #
+# TODO:
+#   - rewrite as an OSC plugin: https://github.com/openSUSE/osc/issues/14
+#   - add option to do server-side "osc cat _link" check
+#
 # Adam Spiers <aspiers@suse.com>
 #
 
