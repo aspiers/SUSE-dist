@@ -81,7 +81,7 @@ classify () {
 show_classification () {
     dir="$1"
     classify "$dir"
-    echo -e "$dir\t$type"
+    printf "%-26s %s\n" "${dir#./}" "$type"
 }
 
 main () {
