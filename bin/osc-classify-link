@@ -1,7 +1,8 @@
 #!/bin/bash
 #
 # Classify one or more checked out OBS project trees, to distinguish
-# between projects which have been branched / linkpac'd / copypac'd.
+# between projects which have been branched / linkpac'd / copypac'd /
+# aggregatepac'd.
 #
 # TODO:
 #   - rewrite as an OSC plugin: https://github.com/openSUSE/osc/issues/14
@@ -42,6 +43,12 @@ classify () {
     fi
 
     type=
+
+    if [ -f "$dir/_aggregate" ]; then
+        target=$( sed -ne '/.*<aggregate project="\(.\+\)">.*/{s//\1/;p}' "$dir/_aggregate" )
+        type="aggregate -> $target"
+        return 0
+    fi
 
     link_info=$(
         osc info "$dir" | \
