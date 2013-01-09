@@ -92,7 +92,11 @@ classify () {
 show_classification () {
     dir="$1"
     classify "$dir"
-    printf "%-26s %s\n" "${dir#./}" "$type"
+    if [ -n "$single" ]; then
+        echo "$type"
+    else
+        printf "%-26s %s\n" "${dir#./}" "$type"
+    fi
 }
 
 main () {
@@ -110,6 +114,12 @@ main () {
             exit 1
         fi
     done
+
+    if [ $# = 1 ] && [ -e "$1/.osc/_package" ]; then
+        single=y
+    else
+        single=
+    fi
 
     for dir in "$@"; do
         if [ -e "$dir/.osc/_package" ]; then
