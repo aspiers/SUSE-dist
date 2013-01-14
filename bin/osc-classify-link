@@ -55,7 +55,7 @@ classify () {
             sed -ne '/^Link info: / {
                         s///;
                         s/^expanded link to project /expanded -> /;
-                        s/^project /-> /;
+                        s/^project //;
                         s/, [lx]\?srcmd5 [0-9a-f]\{32\}//g;
                         s/, package /\//;
                         s/, rev None//;
@@ -73,17 +73,17 @@ classify () {
     fi
 
     if [ -f "$dir/_link" ] && grep -q -- '<branch/>' "$dir/_link"; then
-        type="linkpac $link_info"
+        type="branch of $link_info"
     elif ! grep -q -- '<linkinfo .* baserev=' "$dir/.osc/_files"; then
         # Branches always contain the baserev attribute in <linkinfo>
         # in .osc/_files so if it's missing, that eliminates the
         # possibility it's a branch.  linkpac's don't usually contain
         # baserev in <linkinfo>, but they can.
-        type="linkpac $link_info"
+        type="linkpac to $link_info"
     else
         # This is our best guess without doing a server round-trip
         # FIXME: add option for osc cat _link
-        type="linkpac or branch $link_info"
+        type="linkpac to or branch of $link_info"
     fi
 
     return 0
