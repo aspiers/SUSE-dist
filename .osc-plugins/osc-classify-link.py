@@ -6,16 +6,9 @@ import sys
 # FIXME: read_filemeta could re-use this
 def parse_xml(self, path):
     if not os.path.isfile(path):
-        raise oscerr.OscBaseError('%s does not exist' % path)
+        raise oscerr.OscIOError('%s does not exist' % path)
 
-    try:
-        xml = ET.parse(path)
-    except SyntaxError, e:
-        raise oscerr.NoWorkingCopy(
-            'When parsing %s, the following error was encountered:\n%s' %
-            (path, e))
-
-    return xml
+    return ET.parse(path)
 
 def _contains_branch_element(self, xml):
     patches = xml.find('patches')
@@ -30,11 +23,9 @@ def _classify_dir(self, path, use_server):
     aggfile = os.path.join(path, "_aggregate")
     if os.path.isfile(aggfile):
         aggxml = ET.parse(aggfile).getroot()
-        target = None
-        for node in aggxml.findall('aggregate'):
-            target = node.get('project')
-        if target:
-            return "aggregate -> " + target
+        targets = [ node.get('project') for node in aggxml.findall('aggregate') ]
+        if targets:
+            return "aggregate -> " + ", ".join(targets)
         raise RuntimeError("Couldn't find aggregate target in %s" % aggfile)
 
     pkg = Package(path)
@@ -50,9 +41,8 @@ def _classify_dir(self, path, use_server):
     #     else:
     #         return 'expanded link -> ' + target
 
-    linkpath = os.path.join(path, store, "_link")
-    if os.path.isfile(linkpath):
-        xml = self.parse_xml(linkpath)
+    if "_link" in pkg.filenamelist:
+        xml = self.parse_xml(os.path.join(path, store, "_link"))
         if self._contains_branch_element(xml.getroot()):
             return "branch of " + target
 
@@ -106,21 +96,21 @@ def do_classify(self, subcmd, opts, *args):
         args = [ '.' ]
 
     for path in args:
-        if not os.path.exists(os.path.join(path, store, "_project")):
+        if not is_project_dir(path):
             print >>sys.stderr, path + \
                 " is not associated with a Build Service project; aborting."
             sys.exit(1)
 
-    if len(args) == 1 and os.path.exists(os.path.join(args[0], store, "_package")):
+    if len(args) == 1 and is_package_dir(args[0]):
         single = True
     else:
         single = False
 
     for path in args:
-        if os.path.exists(os.path.join(path, store, "_package")):
+        if is_package_dir(path):
             self._show_classification(path, opts.server, single)
         else:
             for pkg in sorted(os.listdir(path)):
-                if os.path.exists(os.path.join(path, pkg, store, "_package")):
-                    self._show_classification(os.path.join(path, pkg),
-                                              opts.server, single)
+                pkgpath = os.path.join(path, pkg)
+                if is_package_dir(pkgpath):
+                    self._show_classification(pkgpath, opts.server, single)
