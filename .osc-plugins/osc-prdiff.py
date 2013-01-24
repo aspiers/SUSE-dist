@@ -80,6 +80,17 @@ def _prdiff_output_matching_requests(self, opts, requests,
 def do_prdiff(self, subcmd, opts, *args):
     """${cmd_name}: Server-side diff of two projects
 
+    ===============================================================
+    WARNING: If you are seeing this, it means you are using the old
+    prdiff plugin which has been superceded by a merge of the
+    functionality into osc itself:
+
+      https://github.com/openSUSE/osc/pull/18
+
+    You might want to consider uninstalling this plugin and
+    upgrading osc to get the newest version of the functionality.
+    ===============================================================
+
     Compares two projects and either summarises or outputs the
     differences in full.  In the second form, a project is compared
     with one of its branches inside a home:$USER project (the branch
