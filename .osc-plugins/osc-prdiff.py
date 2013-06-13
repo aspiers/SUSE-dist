@@ -6,6 +6,8 @@ import re
 import subprocess
 import sys
 
+from osc import cmdln
+
 def _get_branch_parent(self, prj):
     m = re.match('^home:[^:]+:branches:(.+)', prj)
     # OBS_Maintained is a special case

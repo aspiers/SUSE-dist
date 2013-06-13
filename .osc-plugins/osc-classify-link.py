@@ -5,6 +5,8 @@ from __future__ import print_function
 import os.path
 import sys
 
+from osc import cmdln
+
 # FIXME: read_filemeta could re-use this
 def parse_xml(self, path):
     if not os.path.isfile(path):
