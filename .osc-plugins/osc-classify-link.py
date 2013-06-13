@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+from __future__ import print_function
+
 import os.path
 import sys
 
@@ -71,11 +73,11 @@ def _classify_dir(self, path, use_server):
 def _show_classification(self, path, use_server, single):
     classification = self._classify_dir(path, use_server)
     if single:
-        print classification
+        print(classification)
     else:
         if path[0:2] == "./":
             path = path[2:]
-        print "%-26s %s" % (path, classification)
+        print("%-26s %s" % (path, classification))
 
 @cmdln.option('-s', '--server', action='store_true',
               help='allow server-side checks (slower, improves accuracy)')
@@ -97,8 +99,9 @@ def do_classify(self, subcmd, opts, *args):
 
     for path in args:
         if not is_project_dir(path):
-            print >>sys.stderr, path + \
-                " is not associated with a Build Service project; aborting."
+            print(path +
+                  " is not associated with a Build Service project; aborting.",
+                  file=sys.stderr)
             sys.exit(1)
 
     if len(args) == 1 and is_package_dir(args[0]):

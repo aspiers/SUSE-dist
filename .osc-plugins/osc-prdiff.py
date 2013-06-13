@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import re
 import subprocess
 import sys
@@ -25,7 +27,7 @@ def _prdiff_skip_package(self, opts, pkg):
 
 def _prdiff_output_diff(self, opts, rdiff):
     if opts.diffstat:
-        print
+        print()
         p = subprocess.Popen("diffstat",
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE,
@@ -33,10 +35,10 @@ def _prdiff_output_diff(self, opts, rdiff):
         p.stdin.write(rdiff)
         p.stdin.close()
         diffstat = "".join(p.stdout.readlines())
-        print diffstat
+        print(diffstat)
     elif opts.unified:
-        print
-        print rdiff
+        print()
+        print(rdiff)
         #run_pager(rdiff)
 
 def _prdiff_output_matching_requests(self, opts, requests,
@@ -56,8 +58,8 @@ def _prdiff_output_matching_requests(self, opts, requests,
             if action.tgt_package != pkg:
                 continue
 
-            print
-            print req.list_view()
+            print()
+            print(req.list_view())
             break
 
 @cmdln.alias('projectdiff')
@@ -127,7 +129,8 @@ def do_prdiff(self, subcmd, opts, *args):
                            'args: ' + repr(args))
 
     if opts.diffstat and opts.unified:
-        print >>sys.stderr, 'error - cannot specify both --diffstat and --unified'
+        print('error - cannot specify both --diffstat and --unified',
+              file=sys.stderr)
         sys.exit(1)
 
     apiurl = self.get_api_url()
@@ -146,7 +149,7 @@ def do_prdiff(self, subcmd, opts, *args):
 
         if pkg not in new_packages:
             if opts.old_only:
-                print "old only:  %s" % pkg
+                print("old only:  %s" % pkg)
             continue
 
         rdiff = server_diff_noex(
@@ -157,14 +160,14 @@ def do_prdiff(self, subcmd, opts, *args):
             )
 
         if rdiff:
-            print "differs:   %s" % pkg
+            print("differs:   %s" % pkg)
             self._prdiff_output_diff(opts, rdiff)
 
             if opts.requests:
                 self._prdiff_output_matching_requests(opts, requests,
                                                       newprj, pkg)
         else:
-            print "identical: %s" % pkg
+            print("identical: %s" % pkg)
 
     for pkg in new_packages:
         if self._prdiff_skip_package(opts, pkg):
@@ -172,4 +175,4 @@ def do_prdiff(self, subcmd, opts, *args):
 
         if pkg not in old_packages:
             if opts.new_only:
-                print "new only:  %s" % pkg
+                print("new only:  %s" % pkg)
