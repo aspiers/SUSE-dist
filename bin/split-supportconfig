@@ -1,0 +1,60 @@
+#!/usr/bin/ruby
+#
+# Splits out (de-multiplexes) file contents from a supportconfig file
+# into the original tree structure, relative to the current directory.
+# Best run within a temporary directory, such as the unpacked
+# nts_$HOSTNAME directory.
+#
+# Example usage: split-supportconfig plugin-susecloud.txt
+
+require 'fileutils'
+
+FILE_HEADER    = /^#==\[ (Configuration File|Log File) \]===+#/
+ANY_HEADER     = /^#==\[ (.+) \]===+#/
+
+need = :file_header
+file = nil
+
+ARGF.each do |line|
+  case need
+
+  when :file_header
+    case line
+    when FILE_HEADER
+      need = :file_path
+    when ANY_HEADER
+      # case $1
+      # when 'Section Header', 'Validating RPM'
+      # else
+      #   puts line
+      # end
+    else
+      next
+    end
+
+  when :file_path
+    case line
+    when %r{^# /+(.+?) - File not found$}
+      puts "skipping #{$1} - not found by plugin"
+      need = :file_header
+    when %r{^# /+(.+?)( - Last \d+ Lines)?$}
+      filepath = $1
+      FileUtils.mkpath(File.dirname(filepath))
+      file = File.open(filepath, 'w')
+      puts "splitting to #{file.path}"
+      need = :lines
+    else
+      abort "Was expecting filepath immediately after header but got:\n#{line}"
+    end
+
+  when :lines
+    case line
+    when ANY_HEADER
+      file.close
+      need = :file_header
+      redo
+    else
+      file.write(line)
+    end
+  end
+end

@@ -8,7 +8,7 @@ etc. which are specific to SUSE-based distributions.
 * [plugins](http://en.opensuse.org/openSUSE:OSC_plugins) for [`osc`](http://en.opensuse.org/openSUSE:OSC)
     * [`osc-prdiff.py`](https://github.com/aspiers/SUSE-dist/blob/master/.osc-plugins/osc-prdiff.py) - server-side diff of two projects
     * [`osc-classify-link.py`](https://github.com/aspiers/SUSE-dist/blob/master/.osc-plugins/osc-classify-link.py) - distinguish between projects which have been branched / linkpac'd / copypac'd / aggregatepac'd.
-
+* [`split-supportconfig`](https://github.com/aspiers/SUSE-dist/blob/master/bin/split-supportconfig) - to make it easier to inspect files gathered into a [supportconfig](http://www.novell.com/communities/node/2332/supportconfig-linux) tarball.
 * other stuff I haven't listed yet :)
 
 ## <a name="install">INSTALLATION</a>
