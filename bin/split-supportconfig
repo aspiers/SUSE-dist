@@ -1,21 +1,36 @@
 #!/usr/bin/ruby
 #
 # Splits out (de-multiplexes) file contents from a supportconfig file
-# into the original tree structure, relative to the current directory.
-# Best run within a temporary directory, such as the unpacked
-# nts_$HOSTNAME directory.
+# into the original tree structure, relative to a new 'rootfs'
+# sub-directory.
 #
-# Example usage: split-supportconfig plugin-susecloud.txt
+# Example usage:
+#   tar jxf nts_d00-1e-67-29-c7-e8_130802_0915.tbz
+#   cd nts_d00-1e-67-29-c7-e8_130802_0915
+#   split-supportconfig *.txt
 
 require 'fileutils'
 
 FILE_HEADER    = /^#==\[ (Configuration File|Log File) \]===+#/
 ANY_HEADER     = /^#==\[ (.+) \]===+#/
+OUT_DIR        = 'rootfs'
 
 need = :file_header
 file = nil
+input_file = nil
+
+ARGF.binmode
+
+def progress(msg)
+  puts "    " + msg
+end
 
 ARGF.each do |line|
+  if ARGF.path != input_file
+    input_file = ARGF.path
+    puts input_file
+  end
+
   case need
 
   when :file_header
@@ -35,13 +50,16 @@ ARGF.each do |line|
   when :file_path
     case line
     when %r{^# /+(.+?) - File not found$}
-      puts "skipping #{$1} - not found by plugin"
+      progress "skipping #$1 - not found by plugin"
       need = :file_header
-    when %r{^# /+(.+?)( - Last \d+ Lines)?$}
-      filepath = $1
+    when /^# (grep .+?)( - Last \d+ Lines)$/
+      progress "skipping #$1"
+      need = :file_header
+    when %r{^# /+(.+?)( - Last \d+ Lines)?$}, /^# (sam\.log)/
+      filepath = OUT_DIR + "/#$1"
       FileUtils.mkpath(File.dirname(filepath))
       file = File.open(filepath, 'w')
-      puts "splitting to #{file.path}"
+      progress "splitting to #$1"
       need = :lines
     else
       abort "Was expecting filepath immediately after header but got:\n#{line}"
@@ -58,3 +76,5 @@ ARGF.each do |line|
     end
   end
 end
+
+puts "\nLook in #{OUT_DIR}"
