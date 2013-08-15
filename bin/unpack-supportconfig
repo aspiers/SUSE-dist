@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+dir="${1%.tbz}"
+
+if [ -d "$dir" ]; then
+    echo "$dir already exists"
+else
+    up "$1"
+    if ! [ -d "$dir" ]; then
+        echo >&2 "Something went wrong."
+        exit 1
+    fi
+fi
+
+cd "$dir"
+split-supportconfig *.txt
+
+echo
+echo "Unpacked supportconfig is in $dir/"
