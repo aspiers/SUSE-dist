@@ -77,4 +77,5 @@ ARGF.each do |line|
   end
 end
 
-puts "\nLook in #{OUT_DIR}"
+Dir.chdir OUT_DIR
+puts "\nSplit files are in #{Dir.pwd}"
