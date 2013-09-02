@@ -55,7 +55,7 @@ ARGF.each do |line|
     when /^# (grep .+?)( - Last \d+ Lines)$/
       progress "skipping #$1"
       need = :file_header
-    when %r{^\# /+(.+?)( - Last \d+ Lines)?$}, /^# (.+\.log)/
+    when %r{^\# /+(.+?)( - Last \d+ Lines)?$}, /^# (.+\.(log|xml))/
       filepath = OUT_DIR + "/#$1"
       FileUtils.mkpath(File.dirname(filepath))
       file = File.open(filepath, 'w')
