@@ -49,13 +49,13 @@ ARGF.each do |line|
 
   when :file_path
     case line
-    when %r{^# (.+?) - (File not found|not found by plugin)\s*$}
+    when %r{^\# (.+?) - (File not found|not found by plugin)\s*$}
       progress "skipping #$1 - not found by plugin"
       need = :file_header
     when /^# (grep .+?)( - Last \d+ Lines)$/
       progress "skipping #$1"
       need = :file_header
-    when %r{^# /+(.+?)( - Last \d+ Lines)?$}, /^# (.+\.log)/
+    when %r{^\# /+(.+?)( - Last \d+ Lines)?$}, /^# (.+\.log)/
       filepath = OUT_DIR + "/#$1"
       FileUtils.mkpath(File.dirname(filepath))
       file = File.open(filepath, 'w')
