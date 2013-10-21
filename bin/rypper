@@ -284,14 +284,18 @@ sub list_repos {
   }
   my $delimiter = $l_opts{delimiter} || $DEFAULT_L_DELIMITER;
   my $format = join($delimiter,
-                    map { get_col_format($_, $widths{$_}) } @cols) . "\n";
+                    map { get_col_format($_, $widths{$_}) } @cols);
 
   unless ($l_opts{'no-header'}) {
     my $header = sprintf $format, @cols;
-    print $header, '-' x length($header), "\n";
+    my $divider = '-' x length($header);
+    $header =~ s/\s+$//;
+    print "$header\n$divider\n";
   }
   foreach my $repo (@repos) {
-    printf $format, map { $repo->{$_} } @cols;
+    my $line = sprintf $format, map { $repo->{$_} } @cols;
+    $line =~ s/\s+$//;
+    print $line, "\n";
   }
 }
 
