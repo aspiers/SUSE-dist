@@ -52,7 +52,7 @@ ARGF.each do |line|
     when %r{^\# (.+?) - (File not found|not found by plugin)\s*$}
       progress "skipping #$1 - not found by plugin"
       need = :file_header
-    when /^# (grep .+?)( - Last \d+ Lines)$/
+    when %r{^# ((/bin/)?grep .+?)( - Last \d+ Lines)?$}
       progress "skipping #$1"
       need = :file_header
     when %r{^\# /+(.+?)( - Last \d+ Lines)?$}, /^# (.+\.(log|xml))/
