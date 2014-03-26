@@ -1,19 +1,17 @@
-#!/bin/bash -e
+#!/bin/bash
 
-dir="${1%.tbz}"
+dir=$(basename "${1%.tbz}")
 
 if [ -d "$dir" ]; then
     echo "$dir already exists"
+    echo
 else
-    up "$1"
-    if ! [ -d "$dir" ]; then
-        echo >&2 "Something went wrong."
-        exit 1
-    fi
+    up "$1" || exit $?
 fi
 
-cd "$dir"
-split-supportconfig *.txt
+if ! cd "$dir"; then
+    echo >&2 "Expected directory $dir was missing"
+    exit 1
+fi
 
-echo
-echo "Unpacked supportconfig is in $dir/"
+split-supportconfig *.txt
