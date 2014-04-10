@@ -1,12 +1,7 @@
 #!/bin/bash
 
-dir=$(basename "${1%.tbz}")
-
-if [ -d "$dir" ]; then
-    echo "$dir already exists"
-    echo
-else
-    up "$1" || exit $?
+if ! dir=$(up "$1"); then
+    exit $?
 fi
 
 if ! cd "$dir"; then
