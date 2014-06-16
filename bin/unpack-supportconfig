@@ -9,4 +9,9 @@ if ! cd "$dir"; then
     exit 1
 fi
 
+if ! [ -e basic-environment.txt ]; then
+    echo >&2 "ERROR: basic-environment.txt missing - are you sure this is a supportconfig?"
+    exit 1
+fi
+
 split-supportconfig *.txt
