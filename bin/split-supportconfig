@@ -8,6 +8,9 @@
 #   tar jxf nts_d00-1e-67-29-c7-e8_130802_0915.tbz
 #   cd nts_d00-1e-67-29-c7-e8_130802_0915
 #   split-supportconfig *.txt
+#
+# N.B. You should probably be using unpack-supportconfig which is
+# a wrapper around this.
 
 require 'fileutils'
 
