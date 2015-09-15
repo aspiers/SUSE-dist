@@ -1,5 +1,11 @@
 #!/bin/bash
 
+delete=
+if [ "$1" = '-d' ]; then
+     delete=true
+     shift
+fi
+
 orig_dir="`pwd`"
 
 for supportconfig in "$@"; do
@@ -19,5 +25,13 @@ for supportconfig in "$@"; do
         exit 1
     fi
 
-    split-supportconfig *.txt
+    if ! split-supportconfig *.txt; then
+        echo >&2 "ERROR: failed to split $supportconfig"
+        exit 1
+    fi
+
+    if [ -n "$delete" ]; then
+        cd "$orig_dir"
+        rm "$supportconfig"
+    fi
 done
