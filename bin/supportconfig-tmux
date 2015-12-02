@@ -1,0 +1,141 @@
+#!/bin/bash
+
+source ~/.tmux.d/lib
+
+main () {
+    supportconfig="$@"
+    unpacked="${supportconfig##*/}"
+    unpacked="${unpacked%.tbz}"
+
+    if ! [ -d "$unpacked" ]; then
+        unpack-supportconfig -d "$supportconfig"
+    fi
+    cd "$unpacked"
+
+    extract_info "$unpacked"
+
+    tmux_new_session
+
+    # Doing a cd above can also care of this
+    #tmux set-option default-path ~/
+
+    tmux set-option -t $tmux_session status-left-length 20
+
+    # dircolors -b returns no colours with screen-256color-bce-{s,it}
+    tmux set-option -t $tmux_session -g default-terminal screen-256color
+
+    # Allow respawning of zombie windows
+    tmux set-option -t $tmux_session set-remain-on-exit on
+    tmux set-option -t $tmux_session visual-bell on
+    #tmux set-window-option -t dsrv remain-on-exit on
+
+    tmux_new_window -n VM
+    tmux send-keys -t :VM 'less +G rootfs/var/log/messages' Enter
+
+    if [ -d rootfs/var/log/crowbar/chef-client ]; then
+        admin_chef_client_windows
+    fi
+
+    local_chef_client_log=rootfs/var/log/chef/client.log
+    if [ -e $local_chef_client_log ]; then
+        chef_client_window "lcc" "$local_chef_client_log"
+    fi
+
+    tmux select-window -t :1
+
+    tmux_attach
+}
+
+extract_info () {
+    supportconfig_id="${unpacked#nts_}"
+    supportconfig_id="${supportconfig_id/.cloud.suse.de/}"
+    node_name="${supportconfig_id%_*_*}"
+    date_time="${supportconfig_id#${node_name}_}"
+
+    # Typical supportconfig is named something like one of these:
+    #
+    #   nts_crowbar.vd3.cloud.suse.de_151126_1634.tbz
+    #   nts_crowbar_151126_1634.tbz
+    #
+    # so let's choose a unique tmux session name based on this.
+    tmux_session="${supportconfig_id#crowbar}"
+    tmux_session="${tmux_session#.}"
+
+    maybe_calc_cloud_name "$node_name"
+    if [ -n "$cloud" ]; then
+        node_name="${node_name%.$cloud}"
+    fi
+
+    echo id $supportconfig_id
+    echo cloud $cloud
+    echo node $node_name
+    echo date/time $date_time
+    echo session $tmux_session
+}
+
+maybe_calc_cloud_name () {
+    local node_name="$1"
+    cloud=
+    case "$node_name" in
+        crowbar)
+            # unknown cloud name
+            ;;
+        crowbar.*)
+            # admin node
+            cloud="${node_name#crowbar.}"
+            ;;
+        d[0-9]*)
+            # other node
+            ;;
+        *)
+            echo "ERROR: Unrecognised node name format: $node_name" >&2
+            exit 1
+            ;;
+    esac
+
+    if [ -z "$cloud" ]; then
+        return 1
+    fi
+    return 0
+}
+
+admin_chef_client_windows () {
+    local node_name cc_log_file
+    for cc_log_file in rootfs/var/log/crowbar/chef-client/*.log; do
+        node_name="${cc_log_file##*/}"
+        node_name="${node_name%.log}"
+        node_name="${node_name%.cloud.suse.de}"
+        node_name="${node_name%.$cloud}"
+        case "$node_name" in
+            crowbar)
+                win=admin
+                ;;
+            d52-54-77-77-77-[0-9][0-9])
+                win=${node_name#d52-54-77-77-77-}
+                ;;
+            d52-54-[0-9][0-9]-77-77-[0-9][0-9])
+                win=${node_name#d52-54-??-77-77-}
+                ;;
+        esac
+        win="${win#0}"
+        case "$win" in
+            [1-9]*)
+                win=cc$win
+                ;;
+            *)
+                win=cc-$win
+                ;;
+        esac
+        chef_client_window "$win" "$cc_log_file"
+    done
+}
+
+chef_client_window () {
+    local win="$1" log="$2"
+    tmux_new_window -n $win
+    tmux send-keys -t :$win \
+         "less -p '.*INFO: \*\*\* Chef.*|^={60,}' $log" \
+         Enter
+}
+
+main "$@"
