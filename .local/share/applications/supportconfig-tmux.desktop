@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=supportconfig-tmux
+GenericName=supportconfig handler
 Exec=supportconfig-tmux-window '%u'
 Icon=xfce4-clipman-plugin
 Type=Application
