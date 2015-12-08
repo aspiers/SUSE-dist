@@ -11,7 +11,7 @@ orig_dir="`pwd`"
 for supportconfig in "$@"; do
     cd "$orig_dir"
 
-    if ! dir=$(up "$supportconfig"); then
+    if ! dir=$(unpack "$supportconfig"); then
         exit $?
     fi
 
