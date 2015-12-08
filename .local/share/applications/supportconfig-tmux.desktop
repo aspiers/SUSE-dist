@@ -6,4 +6,4 @@ Icon=kmag
 Type=Application
 Terminal=false
 MimeType=application/x-supportconfig;
-Categories=Development;Utility;System;Debugger;FileTools;
+Categories=Development;Debugger;Utility;Archiving;Shell;System;Filesystem;
