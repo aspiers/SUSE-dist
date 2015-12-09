@@ -7,6 +7,7 @@ main () {
     unpacked="${supportconfig##*/}"
     unpacked="${unpacked%.tbz}"
 
+    pwd="`pwd`"
     echo "pwd is $pwd"
     if [ -d "$unpacked" ]; then
         echo "already unpacked to $unpacked"
@@ -52,6 +53,9 @@ main () {
     tmux select-window -t :1
 
     tmux_attach
+
+    cd "$pwd"
+    maybe_delete "$unpacked"
 }
 
 extract_info () {
@@ -145,6 +149,26 @@ chef_client_window () {
     tmux send-keys -t :$win \
          "less -p '.*INFO: \*\*\* Chef.*|^={60,}' $log" \
          Enter
+}
+
+maybe_delete () {
+    local unpacked="$1"
+    echo "Delete $unpacked [Y] ?"
+    echo -n "Hit Enter to proceed or anything else to keep > "
+    read answer
+    if [ -z "$answer" ] || [[ "$answer" == [Yy] ]]; then
+        case "$unpacked" in
+            nts_*|*/nts_*)
+                if ! rm -rf "$unpacked"; then
+                    echo "Failed: rm -rf $unpacked" >&2
+                    exit 1
+                fi
+                ;;
+            *)
+                echo "Didn't look like an unpacked supportconfig; cowardly refusing to delete." >&2
+                ;;
+        esac
+    fi
 }
 
 main "$@"
