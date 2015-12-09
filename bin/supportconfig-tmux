@@ -4,6 +4,12 @@ source ~/.tmux.d/lib
 
 main () {
     supportconfig="$1"
+
+    if ! [ -e "$supportconfig" ]; then
+        echo "$supportconfig doesn't exist; aborting!" >&2
+        exit 1
+    fi
+
     unpacked="${supportconfig##*/}"
     unpacked="${unpacked%.tbz}"
 
