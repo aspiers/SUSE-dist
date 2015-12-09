@@ -3,7 +3,7 @@
 source ~/.tmux.d/lib
 
 main () {
-    supportconfig="$@"
+    supportconfig="$1"
     unpacked="${supportconfig##*/}"
     unpacked="${unpacked%.tbz}"
 
