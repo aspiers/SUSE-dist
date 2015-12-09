@@ -7,7 +7,10 @@ main () {
     unpacked="${supportconfig##*/}"
     unpacked="${unpacked%.tbz}"
 
-    if ! [ -d "$unpacked" ]; then
+    echo "pwd is $pwd"
+    if [ -d "$unpacked" ]; then
+        echo "already unpacked to $unpacked"
+    else
         unpack-supportconfig -d "$supportconfig"
     fi
     cd "$unpacked"
