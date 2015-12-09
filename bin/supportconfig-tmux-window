@@ -1,4 +1,3 @@
 #!/bin/sh
 
-# If supportconfig-tmux fails, make sure the error is visible.
-urxvt-256color -g 200x60 -e sh -c "cd; supportconfig-tmux $@ || sleep 5"
+urxvt-256color -g 200x60 -e supportconfig-tmux-safe "$@"
