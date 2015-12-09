@@ -10,6 +10,7 @@ main () {
     echo "pwd is $pwd"
     if [ -d "$unpacked" ]; then
         echo "already unpacked to $unpacked"
+        sleep 1
     else
         unpack-supportconfig -d "$supportconfig"
     fi
