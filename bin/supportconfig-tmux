@@ -59,6 +59,7 @@ extract_info () {
     #
     #   nts_crowbar.vd3.cloud.suse.de_151126_1634.tbz
     #   nts_crowbar_151126_1634.tbz
+    #   nts_d52-54-77-77-77-01_151207_0105.tbz
     #
     # so let's choose a unique tmux session name based on this.
     tmux_session="${supportconfig_id#crowbar}"
