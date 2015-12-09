@@ -13,6 +13,10 @@ main () {
     else
         unpack-supportconfig -d "$supportconfig"
     fi
+    if ! [ -d "$unpacked" ]; then
+        echo "Failed to unpack $supportconfig; aborting!" >&2
+        exit 1
+    fi
     cd "$unpacked"
 
     extract_info "$unpacked"
