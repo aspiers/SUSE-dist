@@ -65,11 +65,6 @@ main () {
 }
 
 extract_info () {
-    supportconfig_id="${unpacked#nts_}"
-    supportconfig_id="${supportconfig_id/.cloud.suse.de/}"
-    node_name="${supportconfig_id%_*_*}"
-    date_time="${supportconfig_id#${node_name}_}"
-
     # Typical supportconfig is named something like one of these:
     #
     #   nts_crowbar.vd3.cloud.suse.de_151126_1634.tbz
@@ -77,34 +72,26 @@ extract_info () {
     #   nts_d52-54-77-77-77-01_151207_0105.tbz
     #
     # so let's choose a unique tmux session name based on this.
-    tmux_session="${supportconfig_id#crowbar}"
-    tmux_session="${tmux_session#.}"
+    supportconfig_id="${unpacked#nts_}"
+    supportconfig_id="${supportconfig_id/.cloud.suse.de/}"
+    node_name="${supportconfig_id%_*_*}"
+    date_time="${supportconfig_id#${node_name}_}"
 
-    maybe_calc_cloud_name "$node_name"
-    if [ -n "$cloud" ]; then
-        node_name="${node_name%.$cloud}"
-    fi
-
-    echo id $supportconfig_id
-    echo cloud $cloud
-    echo node $node_name
-    echo date/time $date_time
-    echo session $tmux_session
-}
-
-maybe_calc_cloud_name () {
-    local node_name="$1"
     cloud=
     case "$node_name" in
         crowbar)
             # unknown cloud name
+            node_nickname=admin
             ;;
         crowbar.*)
             # admin node
             cloud="${node_name#crowbar.}"
+            node_name="${node_name%.$cloud}"
+            node_nickname="admin-${cloud}"
             ;;
         d[0-9]*)
             # other node
+            node_nickname="${node_name/d52-54-??-77-77-/node}"
             ;;
         *)
             echo "ERROR: Unrecognised node name format: $node_name" >&2
@@ -112,10 +99,14 @@ maybe_calc_cloud_name () {
             ;;
     esac
 
-    if [ -z "$cloud" ]; then
-        return 1
-    fi
-    return 0
+    tmux_session="$node_nickname-$date_time"
+
+    echo id $supportconfig_id
+    echo cloud $cloud
+    echo node $node_name
+    echo node nickname $node_nickname
+    echo date/time $date_time
+    echo session $tmux_session
 }
 
 admin_chef_client_windows () {
