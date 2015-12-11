@@ -1,6 +1,13 @@
 #!/bin/bash
 
-source ~/.tmux.d/lib
+if [ -e ~/.tmux.d/lib ]; then
+    source ~/.tmux.d/lib
+elif [ -e /usr/lib/tmux/sessions ]; then
+    source /usr/lib/tmux/sessions
+else
+    echo "Couldn't find tmux session library; aborting!" >&2
+    exit 1
+fi
 
 main () {
     supportconfig="$1"
