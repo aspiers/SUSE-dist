@@ -34,7 +34,7 @@ main () {
     # Doing a cd above can also care of this
     #tmux set-option default-path ~/
 
-    tmux set-option -t "$tmux_session" status-left-length 20
+    tmux set-option -t "$tmux_session" status-left-length 30
 
     # dircolors -b returns no colours with screen-256color-bce-{s,it}
     tmux set-option -t "$tmux_session" -g default-terminal screen-256color
