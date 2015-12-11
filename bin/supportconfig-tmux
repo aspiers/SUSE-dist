@@ -56,7 +56,7 @@ main () {
         chef_client_window "lcc" "$local_chef_client_log"
     fi
 
-    tmux select-window -t :1
+    tmux select-window -t :2
 
     tmux_attach
 
