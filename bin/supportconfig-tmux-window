@@ -1,3 +1,9 @@
 #!/bin/sh
 
-urxvt-256color -g 200x60 -e supportconfig-tmux-safe "$@"
+cfg=$HOME/.config/supportconfig-tmux
+
+if [ -e $cfg ]; then
+    source $cfg
+fi
+
+${SUPPORTCONFIG_TERMINAL:-xdg-terminal} supportconfig-tmux-safe "$@"
