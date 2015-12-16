@@ -117,8 +117,14 @@ extract_info () {
 }
 
 admin_chef_client_windows () {
+    local ccdir=rootfs/var/log/crowbar/chef-client
+
+    tmux_new_window -n drift
+    tmux send-keys -t :drift \
+         "cd $ccdir && check-chef-client-drift d*" Enter
+
     local node_name cc_log_file
-    for cc_log_file in rootfs/var/log/crowbar/chef-client/*.log; do
+    for cc_log_file in $ccdir/*.log; do
         node_name="${cc_log_file##*/}"
         node_name="${node_name%.log}"
         node_name="${node_name%.cloud.suse.de}"
