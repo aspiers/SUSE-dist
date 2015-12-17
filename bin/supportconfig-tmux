@@ -12,26 +12,24 @@ fi
 main () {
     supportconfig="$1"
 
+    pwd="`pwd`"
+    echo "pwd is $pwd"
+
     if ! [ -e "$supportconfig" ]; then
         echo "$supportconfig doesn't exist; aborting!" >&2
         exit 1
     fi
 
     unpacked="${supportconfig##*/}"
-    unpacked="${unpacked%.tbz}"
-
-    pwd="`pwd`"
-    echo "pwd is $pwd"
-    if [ -d "$unpacked" ]; then
-        echo "already unpacked to $unpacked"
-        sleep 1
-    else
+    if ! [ -d "$supportconfig" ]; then
+        unpacked="${unpacked%.tbz}"
         unpack-supportconfig -d "$supportconfig"
+        if ! [ -d "$unpacked" ]; then
+            echo "Failed to unpack $supportconfig; aborting!" >&2
+            exit 1
+        fi
     fi
-    if ! [ -d "$unpacked" ]; then
-        echo "Failed to unpack $supportconfig; aborting!" >&2
-        exit 1
-    fi
+
     cd "$unpacked"
 
     extract_info "$unpacked"
