@@ -98,6 +98,9 @@ extract_info () {
             # other node
             node_nickname="${node_name/d52-54-??-77-77-/node}"
             ;;
+        d*)
+            node_nickname="${node_name//-/}"
+            ;;
         *)
             echo "ERROR: Unrecognised node name format: $node_name" >&2
             exit 1
