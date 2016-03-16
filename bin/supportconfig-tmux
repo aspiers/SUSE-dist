@@ -102,8 +102,7 @@ extract_info () {
             node_nickname="${node_name//-/}"
             ;;
         *)
-            echo "ERROR: Unrecognised node name format: $node_name" >&2
-            exit 1
+            node_nickname="$node_name"
             ;;
     esac
 
