@@ -94,7 +94,7 @@ extract_info () {
             node_name="${node_name%.$cloud}"
             node_nickname="admin-${cloud}"
             ;;
-        d[0-9]*)
+        d52-54-??-77-77-*)
             # other node
             node_nickname="${node_name/d52-54-??-77-77-/node}"
             ;;
@@ -126,18 +126,19 @@ admin_chef_client_windows () {
     local node_name cc_log_file
     for cc_log_file in $ccdir/*.log; do
         node_name="${cc_log_file##*/}"
-        node_name="${node_name%.log}"
-        node_name="${node_name%.cloud.suse.de}"
-        node_name="${node_name%.$cloud}"
+        node_name="${node_name%%.*}"
         case "$node_name" in
             crowbar)
                 win=admin
                 ;;
-            d52-54-77-77-77-[0-9][0-9])
-                win=${node_name#d52-54-77-77-77-}
-                ;;
-            d52-54-[0-9][0-9]-77-77-[0-9][0-9])
+            d52-54-??-77-77-[0-9][0-9])
                 win=${node_name#d52-54-??-77-77-}
+                ;;
+            d[0-9a-f][0-9a-f]-??-??-??-??-??)
+                win=${node_name//-/}
+                ;;
+            *)
+                win=$node_name
                 ;;
         esac
         win="${win#0}"
