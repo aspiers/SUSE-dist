@@ -19,6 +19,8 @@ etc. which are specific to SUSE-based distributions.
 This repository is designed to be [stowed](http://www.gnu.org/software/stow/)
 directly into your home directory:
 
+    mkdir ~/stow
+    cd ~/stow
     git clone git://github.com/aspiers/SUSE-dist.git
     stow -d . -t ~ SUSE-dist
 
