@@ -176,7 +176,7 @@ if ($opts{version}) {
 
 sub get_repo_ids {
   my (@ids, %repos);
-  my @FIELDS = qw(id alias name enabled refresh priority type uri service);
+  my @FIELDS = qw(id alias name enabled gpg refresh priority type uri service);
   # Thanks to Michal Marek for pointing out that on openSUSE 11.1 at
   # least, zypper's output can sometimes start with a strange escape
   # sequence when localised.  We work-around by setting LC_MESSAGES=C.
