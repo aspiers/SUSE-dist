@@ -1,0 +1,6 @@
+#!/bin/bash
+
+lnav \
+    /var/log/crowbar/production.log \
+    /var/log/crowbar/chef-client/*.log \
+    "$@"
