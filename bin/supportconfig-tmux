@@ -124,6 +124,10 @@ extract_info () {
 admin_chef_client_windows () {
     local ccdir=rootfs/var/log/crowbar/chef-client
 
+    tmux_new_window -n sync
+    tmux send-keys -t :sync \
+         "lnav-chef-sync-marks $ccdir/*.log" Enter
+
     tmux_new_window -n lnav
     tmux send-keys -t :lnav \
          "crowbar-lnav-admin" Enter
