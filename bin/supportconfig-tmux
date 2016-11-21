@@ -50,7 +50,7 @@ main () {
     #tmux set-window-option -t dsrv remain-on-exit on
 
     tmux_new_window -n VM
-    tmux send-keys -t :VM 'less +G rootfs/var/log/messages' Enter
+    tmux send-keys -t :VM 'lnav rootfs/var/log/messages' Enter
 
     if [ -d rootfs/var/log/crowbar/chef-client ]; then
         admin_server=yes
@@ -167,7 +167,13 @@ chef_client_window () {
     local win="$1" log="$2"
     tmux_new_window -n $win
     tmux send-keys -t :$win \
-         "less -p '.*INFO: \*\*\* Chef.*|^={60,}' $log" \
+        "lnav "\
+        "-c ':filter-out FATAL: No authorization keys found' "\
+        "-c ':highlight .*INFO: \*\*\* Chef.*|^={60,}' "\
+        "-c ':goto 0' "\
+        "-c ':next-mark error' "\
+        "-c ':relative-goto -20' "\
+        "$log" \
          Enter
 }
 
