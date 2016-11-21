@@ -53,6 +53,7 @@ main () {
     tmux send-keys -t :VM 'less +G rootfs/var/log/messages' Enter
 
     if [ -d rootfs/var/log/crowbar/chef-client ]; then
+        admin_server=yes
         admin_chef_client_windows
     fi
 
@@ -61,7 +62,11 @@ main () {
         chef_client_window "lcc" "$local_chef_client_log"
     fi
 
-    tmux select-window -t :2
+    if [ -n "$admin_server" ]; then
+        tmux select-window -t :lnav
+    else
+        tmux select-window -t :2
+    fi
 
     tmux_attach
 
