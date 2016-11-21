@@ -1,23 +1,34 @@
 #!/bin/bash
 
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+# This script is obsolete!  Instead please use lnav-chef-sync-marks!
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+
+
+
+
+
+
+
 # Show all synchronization points between Crowbar nodes, sorted
 # chronologically, with all matches highlighted and colour-coded
 # according to the node:
 #
-# Type 1 sync points are highlighted if they are critical,
-#     i.e. "create-" on the founder, which is assumed to be node1, and
-#     "wait-" on other nodes.
+#   default match colour: red (or whatever grep highlights with)
+#   nodes ending in -77-02: green
+#   nodes ending in -77-03: yellow
+#   nodes ending in -77-04: blue
 #
-#     N.B. this highlighting only appears after pressing 'x' to toggle
-#     display of filenames, which requires my patch:
-#
-#         https://github.com/tstack/lnav/pull/372
-#
-#     which is included in my OBS package of lnav:
-#
-#         https://build.opensuse.org/package/show/home:aspiers:branches:server:monitoring/lnav
-#
-# Type 2 sync points ("sync-") are also highlighted.
+# Type 1 sync points are highlighted in bold white if they are critical
+#     (i.e. "create-" on the founder, which is assumed to be node1, and
+#     "wait-" on other nodes).
+# Type 2 sync points are highlighted in bold white.
 #
 # Also include the beginning of each chef-client run, and any mentions
 # of FATAL.
@@ -30,15 +41,18 @@ if [ $# = 0 ]; then
     exit 1
 fi
 
-lnav \
-    -c ':filter-in Processing crowbar-pacemaker_sync_mark\[.*\])' \
-    -c ':filter-in \*\*\* Chef [0-9].*' \
-    -c ':filter-in FATAL.*' \
-    -c ':filter-in Setting .* cluster mark' \
-    -c ':highlight ^.*77-01.*create-.*|sync-' \
-    -c ':goto 0' \
-    -c ':next-mark error' \
-    -c ':relative-goto -20' \
-    "$@"
-
-# See how much nicer this is than check-chef-client-drift-old !
+esc=$'\e'
+egrep --color=always \
+      '(\*\*\* Chef [0-9].*|FATAL.*|Processing crowbar-pacemaker_sync_mark\[.*\])'\
+      "$@" |
+    sed -r "
+        s/\.cloud\.suse\.de\.log(.*)(\[201[0-9])/\1 \2/;
+        /-77-02/s/$esc\[01;31m/$esc\[01;32m/;
+        /-77-03/s/$esc\[01;31m/$esc\[01;33m/;
+        /-77-04/s/$esc\[01;31m/$esc\[01;34m/;
+        s/( crowbar-pacemaker_sync_mark\[)(sync-)/\1$esc\[0;1m\2/;
+        /-77-01/   s/( crowbar-pacemaker_sync_mark\[)(create-)/\1$esc\[0;1m\2/;
+        /-77-0[^1]/s/( crowbar-pacemaker_sync_mark\[)(wait-)/\1$esc\[0;1m\2/;
+        " |
+    sort -k2 -k1 |
+    less -p 'FATAL'
