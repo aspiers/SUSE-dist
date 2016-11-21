@@ -1,6 +1,9 @@
 #!/bin/bash
 
 lnav \
+    -c ':goto 0' \
+    -c ':next-mark error' \
+    -c ':relative-goto -20' \
     /var/log/crowbar/production.log \
     /var/log/crowbar/chef-client/*.log \
     "$@"
