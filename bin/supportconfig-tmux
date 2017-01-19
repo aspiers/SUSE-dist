@@ -50,9 +50,10 @@ main () {
     #tmux set-window-option -t dsrv remain-on-exit on
 
     tmux_new_window -n VM
-    tmux send-keys -t :VM 'less +G rootfs/var/log/messages' Enter
+    tmux send-keys -t :VM 'lnav rootfs/var/log/messages' Enter
 
     if [ -d rootfs/var/log/crowbar/install.log ]; then
+        admin_server=yes
         admin_chef_client_windows
     fi
 
@@ -61,7 +62,11 @@ main () {
         chef_client_window "lcc" "$local_chef_client_log"
     fi
 
-    tmux select-window -t :2
+    if [ -n "$admin_server" ]; then
+        tmux select-window -t :lnav
+    else
+        tmux select-window -t :2
+    fi
 
     tmux_attach
 
@@ -119,6 +124,14 @@ extract_info () {
 admin_chef_client_windows () {
     local ccdir=rootfs/var/log/crowbar/chef-client
 
+    tmux_new_window -n sync
+    tmux send-keys -t :sync \
+         "lnav-chef-sync-marks $ccdir/*.log" Enter
+
+    tmux_new_window -n lnav
+    tmux send-keys -t :lnav \
+         "crowbar-lnav-admin" Enter
+
     local node_name cc_log_file
     for cc_log_file in $ccdir/*.log; do
         node_name="${cc_log_file##*/}"
@@ -154,7 +167,13 @@ chef_client_window () {
     local win="$1" log="$2"
     tmux_new_window -n $win
     tmux send-keys -t :$win \
-         "less -p '.*INFO: \*\*\* Chef.*|^={60,}' $log" \
+        "lnav "\
+        "-c ':filter-out FATAL: No authorization keys found' "\
+        "-c ':highlight .*INFO: \*\*\* Chef.*|^={60,}' "\
+        "-c ':goto 0' "\
+        "-c ':next-mark error' "\
+        "-c ':relative-goto -20' "\
+        "$log" \
          Enter
 }
 

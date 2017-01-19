@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+# This script is obsolete!  Instead please use lnav-chef-sync-marks!
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+
+
+
+
+
+
+
 # Show all synchronization points between Crowbar nodes, sorted
 # chronologically, with all matches highlighted and colour-coded
 # according to the node:

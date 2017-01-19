@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [[ `pwd` == */rootfs ]]; then
+    root=
+elif [[ `pwd` == */nts_* ]] && [ -d rootfs ]; then
+    root=rootfs/
+elif [ -d /var/log/crowbar/chef-client ]; then
+    root=/
+else
+    echo "Couldn't find log files; aborting." >&2
+    exit 1
+fi
+
+lnav \
+    -c ':goto 0' \
+    -c ':next-mark error' \
+    -c ':relative-goto -20' \
+    ${root}var/log/crowbar/production.log \
+    ${root}var/log/crowbar/chef-client/*.log \
+    "$@"
