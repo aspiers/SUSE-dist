@@ -50,7 +50,7 @@ main () {
     #tmux set-window-option -t dsrv remain-on-exit on
 
     tmux_new_window -n VM
-    tmux send-keys -t :VM 'lnav rootfs/var/log/messages' Enter
+    tmux send-keys -t :VM 'lnav2 rootfs/var/log/messages' Enter
 
     if [ -e rootfs/var/log/crowbar/install.log ]; then
         admin_server=yes
@@ -181,13 +181,8 @@ lnav_window () {
     shift 2
     tmux_new_window -n $win
     tmux send-keys -t :$win \
-        "lnav $* "\
-        "-c ':goto 1 min later' "\
-        "-c ':goto 0' "\
-        "-c ':next-mark error' "\
-        "-c ':relative-goto -20' "\
-        "$log" \
-         Enter
+        "lnav2 -- $* $log" \
+        Enter
 }
 
 maybe_delete () {

@@ -41,11 +41,7 @@ def lnav(files)
   ENV['TZ'] = 'UTC'
   ENV['LANG'] = 'C'
 
-  system 'lnav',
-         '-c', ':goto +1 minute',
-         '-c', ':goto 0',
-         '-c', ':next-mark error',
-         '-c', ':relative-goto -20',
+  system 'lnav2', '--',
          *pattern_commands,
          *files
 end
