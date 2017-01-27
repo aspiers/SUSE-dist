@@ -20,7 +20,7 @@ def find_root
     ""        # analysing a supportconfig
   elsif pwd =~ %r{/nts_} && File.directory?("rootfs")
     "rootfs/" # analysing a supportconfig
-  elsif File.directory? "/var/log/crowbar/install.log"
+  elsif File.exist? "/var/log/crowbar/install.log"
     "/"       # on an actual admin server
   else
     abort "Couldn't find log files; aborting."
