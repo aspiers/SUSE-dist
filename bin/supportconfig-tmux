@@ -57,6 +57,12 @@ main () {
         admin_chef_client_windows
     fi
 
+    compute_logs=rootfs/var/log/nova
+    if [ -e $compute_logs/nova-compute.log ]; then
+        compute=yes
+        lnav_window compute "${compute_logs}/*"
+    fi
+
     local_chef_client_log=rootfs/var/log/chef/client.log
     if [ -e $local_chef_client_log ]; then
         chef_client_window "lcc" "$local_chef_client_log"
