@@ -52,7 +52,7 @@ main () {
     tmux_new_window -n VM
     tmux send-keys -t :VM 'lnav rootfs/var/log/messages' Enter
 
-    if [ -d rootfs/var/log/crowbar/install.log ]; then
+    if [ -e rootfs/var/log/crowbar/install.log ]; then
         admin_server=yes
         admin_chef_client_windows
     fi
