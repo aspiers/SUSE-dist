@@ -46,6 +46,10 @@ def lnav(files)
          *files
 end
 
+def re_glob(glob, re)
+  Pathname.glob(glob).map(&:to_s).grep re
+end
+
 def files_to_view
   # user:
   # - "#{root}root/.bash_history",
@@ -58,11 +62,10 @@ def files_to_view
   #   "#{root}var/log/crowbar/chef-client/*.log",
   #   "#{root}var/log/chef/client.log",
   root = find_root
-  chef_client_logs = Pathname.glob("#{root}var/log/crowbar/chef-client/*.log")
 
   return [
-    "#{root}var/log/crowbar/production.log",
-    *chef_client_logs.map(&:to_s)
+    *re_glob("#{root}var/log/crowbar/production.log*",    /\.log(-\d+)?$/),
+    *re_glob("#{root}var/log/crowbar/chef-client/*.log*", /\.log(-\d+)?$/),
   ]
 end
 
