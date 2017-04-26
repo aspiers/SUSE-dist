@@ -5,6 +5,8 @@
 
 set -e
 
+here=`dirname $0`
+
 export TZ=UTC  # make sure we don't get bitten by any weird lnav bug
 
 MACs=MACs.yml
@@ -12,12 +14,12 @@ MACs=MACs.yml
 lnav_args=()
 if [ "$1" = "-f" ]; then
     shift
-    lnav_args=( -f ../filters.txt )
+    lnav_args=( -f $here/../etc/lnav-SOC-filters.txt )
 fi
 
-files="$( ../postprocess.rb log-files.yml $MACs $@ | grep -v compute )"
+files="$( $here/postprocess.rb log-files.yml $MACs $@ | grep -v compute )"
 
-../lnav.rb \
+$here/lnav2 \
     --start-at "Wed 18 13:20 UTC" \
     -- \
     "${lnav_args[@]}" \
