@@ -53,8 +53,9 @@ def progress(msg)
   $stderr.puts "# " + msg
 end
 
-def preprocess_all(files, mac_to_host)
-  macs_regexp = Regexp.new(mac_to_host.keys.join("|"))
+def preprocess_all(files, mac_to_host, addr_to_host)
+  replacement_strings = mac_to_host.keys + addr_to_host.keys
+  regexp = Regexp.new(replacement_strings.join("|"))
 
   files.map do |file|
     if ! File.file? file.to_s
@@ -67,23 +68,26 @@ def preprocess_all(files, mac_to_host)
     processed_name = get_processed_filename(file, mac_to_host)
     if needs_processing(file, processed_name)
       progress "Pre-processing #{file} ..."
-      preprocess(file, processed_name, macs_regexp, mac_to_host)
+      preprocess(file, processed_name, regexp, mac_to_host, addr_to_host)
     end
 
     puts processed_name.to_s
   end.compact
 end
 
-def preprocess(in_file, out_file, macs_regexp, mac_to_host)
+def preprocess(in_file, out_file, regexp, mac_to_host, addr_to_host)
   progress "  -> #{out_file}"
   File.open(out_file, "w") do |out|
     File.new(in_file, encoding: Encoding::ASCII_8BIT).each do |line|
       new_line = line.gsub(macs_regexp) do |m|
-        unless mac_to_host[$&]
-          raise $&
+        if mac_to_host[$&]
+          mac_to_host[$&]
+        elsif addr_to_host[$&]
+          addr_to_host[$&]
+        else
+          raise "Didn't have entry for $& as MAC or IP address"
           exit
         end
-        mac_to_host[$&]
       end
       out.puts new_line
     end
@@ -114,16 +118,18 @@ end
 
 def main
   if ARGV.size < 2
-    abort "Usage: #$0 LOG-YAML MACS-YAML [LOG-SECTION ...]"
+    abort "Usage: #$0 LOG-YAML MACS-YAML IP-ADDRS-YAML [LOG-SECTION ...]"
   end
 
   logfiles_config = ARGV.shift
   macs_file = ARGV.shift
+  addr_file = ARGV.shift
 
   logfiles = logfiles_from_yaml(logfiles_config)
   mac_to_host = YAML.load_file(macs_file)
+  addr_to_host = YAML.load_file(addr_file)
 
-  preprocess_all(logfiles, mac_to_host)
+  preprocess_all(logfiles, mac_to_host, addr_to_host)
 end
 
 main
