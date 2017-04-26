@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# Post-process, chronologically merge, and filter a bunch of SAP logs
+# so we can perform analysis on interesting events.
+
+set -e
+
+export TZ=UTC  # make sure we don't get bitten by any weird lnav bug
+
+MACs=MACs.yml
+
+lnav_args=()
+if [ "$1" = "-f" ]; then
+    shift
+    lnav_args=( -f ../filters.txt )
+fi
+
+files="$( ../postprocess.rb log-files.yml $MACs $@ | grep -v compute )"
+
+../lnav.rb \
+    --start-at "Wed 18 13:20 UTC" \
+    -- \
+    "${lnav_args[@]}" \
+    $files
+
+#       --hide-before "Dec 3 7:30am UTC" \
