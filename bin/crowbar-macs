@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 #
-# Print a host -> alias mapping from a Crowbar admin node supportconfig
+# Print a host (MAC) -> alias mapping from a Crowbar admin node supportconfig
 
 require 'json'
 require 'pathname'
