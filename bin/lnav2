@@ -9,6 +9,21 @@ require 'pp'
 
 ENV['LANG'] = "C"
 
+class OptionParser
+  # Like order!, but leave any unrecognized --switches alone
+  # https://stackoverflow.com/a/40434335/179332
+  def order_recognized!(args=ARGV)
+    extra_opts = []
+    begin
+      order!(args) { |a| extra_opts << a }
+    rescue OptionParser::InvalidOption => e
+      extra_opts << e.args[0]
+      retry
+    end
+    args[0, 0] = extra_opts
+  end
+end
+
 def main
   options = parse_options
 
@@ -62,7 +77,7 @@ def parse_options
       end
     end
 
-    parser.permute!
+    parser.order_recognized!
   end
 end
 

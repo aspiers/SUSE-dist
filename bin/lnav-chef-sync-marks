@@ -30,16 +30,13 @@ if [ $# = 0 ]; then
     exit 1
 fi
 
-lnav \
+lnav2 \
     -c ':filter-in Processing crowbar-pacemaker_sync_mark\[.*\])' \
     -c ':filter-in \*\*\* Chef [0-9].*' \
     -c ':filter-in FATAL.*' \
     -c ':filter-in Setting .* cluster mark' \
     -c ':filter-out FATAL: No authorization keys found' \
     -c ':highlight ^.*77-01.*create-.*|sync-' \
-    -c ':goto 0' \
-    -c ':next-mark error' \
-    -c ':relative-goto -20' \
     "$@"
 
 # See how much nicer this is than check-chef-client-drift-old !
