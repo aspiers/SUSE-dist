@@ -1,5 +1,11 @@
 #!/usr/bin/ruby
 #
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#   DO NOT USE THIS DIRECTLY!  Instead use unpack-supportconfig which
+#   wraps around it.  However it's recommended to install from rpms -
+#   see https://github.com/aspiers/SUSE-dist for details.
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
 # Splits out (de-multiplexes) file contents from a supportconfig file
 # into the original tree structure, relative to a new 'rootfs'
 # sub-directory.
@@ -8,9 +14,6 @@
 #   tar jxf nts_d00-1e-67-29-c7-e8_130802_0915.tbz
 #   cd nts_d00-1e-67-29-c7-e8_130802_0915
 #   split-supportconfig *.txt
-#
-# N.B. You should probably be using unpack-supportconfig which is
-# a wrapper around this.
 
 require 'fileutils'
 
