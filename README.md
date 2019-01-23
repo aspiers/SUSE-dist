@@ -6,7 +6,6 @@ etc. which are specific to SUSE-based distributions.
 ## Contents
 
 *   [plugins](http://en.opensuse.org/openSUSE:OSC_plugins) for [`osc`](http://en.opensuse.org/openSUSE:OSC)
-    * [`osc-prdiff.py`](https://github.com/aspiers/SUSE-dist/blob/master/.osc-plugins/osc-prdiff.py) - server-side diff of two projects
     * [`osc-classify-link.py`](https://github.com/aspiers/SUSE-dist/blob/master/.osc-plugins/osc-classify-link.py) - distinguish between projects which have been branched / linkpac'd / copypac'd / aggregatepac'd.
 *   files to make it easier to inspect files gathered into a [supportconfig](http://www.novell.com/communities/node/2332/supportconfig-linux) tarball.  **It's recommended to [install these via packages](https://software.opensuse.org/package/supportconfig-utils)**, but the individual files are listed below anyway:
     *   [`unpack-supportconfig`](https://github.com/aspiers/SUSE-dist/blob/master/bin/unpack-supportconfig) - a wrapper around `split-supportconfig` which unpacks the tarball, runs `split-supportconfig *.txt`, and optionally deletes the packed tarball.  Requires the [`up`](https://github.com/aspiers/shell-env/blob/master/bin/up) utility for handling the tarball unpacking - so install that somewhere on your `$PATH` before use.
