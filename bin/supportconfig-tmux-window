@@ -1,9 +1,0 @@
-#!/bin/sh
-
-cfg=$HOME/.config/supportconfig-tmux
-
-if [ -e $cfg ]; then
-    source $cfg
-fi
-
-${SUPPORTCONFIG_TERMINAL:-xdg-terminal} supportconfig-tmux-safe "$@"
