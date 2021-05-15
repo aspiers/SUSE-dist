@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo zypper se -i -s "$@"

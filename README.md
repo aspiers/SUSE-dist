@@ -5,8 +5,18 @@ etc. which are specific to SUSE-based distributions.
 
 ## Contents
 
-*   [plugins](http://en.opensuse.org/openSUSE:OSC_plugins) for [`osc`](http://en.opensuse.org/openSUSE:OSC)
-    * [`osc-classify-link.py`](https://github.com/aspiers/SUSE-dist/blob/master/.osc-plugins/osc-classify-link.py) - distinguish between projects which have been branched / linkpac'd / copypac'd / aggregatepac'd.
+*   [plugins](http://en.opensuse.org/openSUSE:OSC_plugins) for
+    [`osc`](http://en.opensuse.org/openSUSE:OSC)
+
+    * [`osc-classify-link.py`](https://github.com/aspiers/SUSE-dist/blob/master/.osc-plugins/osc-classify-link.py) - 
+    distinguish between projects which have been branched /
+    linkpac'd / copypac'd / aggregatepac'd.
+
+*   files to make it easier to inspect files gathered into a [supportconfig](http://www.novell.com/communities/node/2332/supportconfig-linux) tarball were previously here, but can now be found at https://github.com/SUSE/supportconfig-utils
+
+*   [`rypper`](bin/rypper) - a tool for performing batch operations on
+    `zypper` repositories
+
 *   other stuff I haven't listed yet :)
 
 ## <a name="install">INSTALLATION</a>
