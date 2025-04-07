@@ -1,0 +1,6 @@
+#!/bin/bash
+
+sudo zypper up $(
+    sudo zypper -x search -i "$@" | \
+        xq -q solvable -a name
+)

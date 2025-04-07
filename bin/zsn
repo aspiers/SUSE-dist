@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo zypper -x se -s "$@" | xq -q solvable -a name
