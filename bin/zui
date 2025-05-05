@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# Zypper Update Installed
 
 sudo zypper up $(
     sudo zypper -x search -i "$@" | \

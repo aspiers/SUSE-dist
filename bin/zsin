@@ -1,3 +1,5 @@
 #!/bin/bash
+#
+# Zypper Search Installed and output Names
 
 sudo zypper -x se -s -i "$@" | xq -q solvable -a name
