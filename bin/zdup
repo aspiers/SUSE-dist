@@ -1,3 +1,4 @@
 #!/bin/bash
 
+zref &&
 sudo zypper dup --allow-vendor-change -l "$@"
