@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+# Zypper Search Updateable
+
+sudo zypper -x search -is "$@" | \
+    xq -q 'solvable[repository="(System Packages)"]' -a name
+

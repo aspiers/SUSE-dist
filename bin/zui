@@ -2,6 +2,4 @@
 #
 # Zypper Update Installed
 
-sudo zypper -x search -i "$@" | \
-    xq -q 'solvable[repository="(System Packages)"]' -a name | \
-    xargs -r sudo zypper up
+zsu "$@" | xargs -r sudo zypper up
